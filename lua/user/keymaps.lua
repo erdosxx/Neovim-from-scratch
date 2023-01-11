@@ -7,7 +7,7 @@ local keymap = vim.api.nvim_set_keymap
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", opts)
-vim.g.mapleader = " "
+vim.g.mapleader = "-"
 vim.g.maplocalleader = " "
 
 -- Modes
@@ -17,34 +17,65 @@ vim.g.maplocalleader = " "
 --   visual_block_mode = "x",
 --   term_mode = "t",
 --   command_mode = "c",
+--   operator-pening = "o" 
 
 -- Normal --
+-- Don't use Ex mode, use Q for formatting
+-- gq: apply format, such as line width for that area.
+-- For example, :setlocal tw=N
+-- See: https://www.vim.org/scripts/script.php?script_id=4924
+keymap("n", "Q", "gq", opts)
+
+-- change word to upper case in normal mode.
+keymap ("n", "<leader><C-u>", "viwUw", opts)
+
 -- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)
 keymap("n", "<C-j>", "<C-w>j", opts)
 keymap("n", "<C-k>", "<C-w>k", opts)
 keymap("n", "<C-l>", "<C-w>l", opts)
 
-keymap("n", "<leader>e", ":Lex 30<cr>", opts)
+-- Put file explore to Left with size 30
+keymap("n", "<localleader>e", ":Lexplore 30<cr>", opts)
 
--- Resize with arrows
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+-- Edit $MYVIMRC in vertical split window
+keymap("n", "<leader>ev", ":vsplit $MYNVIMLUARC<CR>", opts)
+-- Read and apply $MYVIMRC
+-- keymap("n", "<leader>sv", ":source $MYNVIMLUARC<CR>", opts)
+-- Ref: https://stackoverflow.com/questions/72412720/how-to-source-init-lua-without-restarting-neovim
+keymap("n", "<leader>sv", "<cmd>lua ReloadConfig()<CR>", opts)
+-- Edit $MYURXVTRC in vertical split window
+keymap("n", "<leader>uv", ":vsplit $MYURXVTRC<CR>", opts)
+-- Read and apply $MYURXVTRC
+keymap("n", "<leader>su", "!xrdb $HOME/.Xresources<CR>", opts)
+
+-- Add " to start and end of word. Ex) word -> "word"
+keymap("n", "<leader>\"", "viw<esc>a\"<esc>bi\"<esc>lel", opts)
+-- Add ' to start and end of word. Ex) word -> 'word'
+keymap("n", "<leader>'", "viw<esc>a'<esc>bi'<esc>lel", opts)
+
+-- Go to the beginning of the current line
+keymap("n", "H", "^", opts)
+-- Go to the end of the current line
+keymap("n", "L", "$", opts)
+
+-- Resize window
+keymap("n", "<localleader><Up>", ":resize -2<CR>", opts)
+keymap("n", "<localleader><Down>", ":resize +2<CR>", opts)
+keymap("n", "<localleader><Left>", ":vertical resize -2<CR>", opts)
+keymap("n", "<localleader><Right>", ":vertical resize +2<CR>", opts)
 
 -- Navigate buffers
-keymap("n", "<S-l>", ":bnext<CR>", opts)
-keymap("n", "<S-h>", ":bprevious<CR>", opts)
-
--- Move text up and down
-keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
-keymap("n", "<A-k>", "<Esc>:m .-2<CR>==gi", opts)
+keymap("n", "<localleader>l", ":bnext<CR>", opts)
+keymap("n", "<localleader>h", ":bprevious<CR>", opts)
 
 -- Insert --
 -- Press jk fast to enter
 keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
+
+-- change word to upper case in insert mode.
+keymap ("i", "<leader><C-u>", "<ESC>lviwUwi", opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -54,7 +85,14 @@ keymap("v", ">", ">gv", opts)
 -- Move text up and down
 keymap("v", "<A-j>", ":m .+1<CR>==", opts)
 keymap("v", "<A-k>", ":m .-2<CR>==", opts)
+
+-- paste text in visual area
 keymap("v", "p", '"_dP', opts)
+
+-- Add " to start and end of word. Ex) word -> "word"
+keymap("v", "<leader>\"", "<ESC>`>a\"<ESC>`<i\"<ESC>", opts)
+-- Add ' to start and end of word. Ex) word -> 'word'
+keymap("v", "<leader>'", "<ESC>`>a'<ESC>`<i'<ESC>", opts)
 
 -- Visual Block --
 -- Move text up and down

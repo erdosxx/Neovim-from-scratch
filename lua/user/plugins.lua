@@ -40,14 +40,17 @@ packer.init({
 
 -- Install your plugins here
 return packer.startup(function(use)
- -- My plugins here
-  use "wbthomason/packer.nvim" -- Have packer manage itself
-  use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
-  use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
+  -- My plugins here
+  
+  -- Have packer manage itself
+  use "wbthomason/packer.nvim" 
+  -- An implementation of the Popup API from vim in Neovim
+  use "nvim-lua/popup.nvim"
+  -- Useful lua functions used by lots of plugins
+  use "nvim-lua/plenary.nvim"
 
   -- Colorschemes
-  -- use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
-  use "lunarvim/darkplus.nvim"
+  use {"lunarvim/colorschemes", 'folke/tokyonight.nvim'}
 
   -- cmp plugins
   use "hrsh7th/nvim-cmp" -- The completion plugin
@@ -67,7 +70,6 @@ return packer.startup(function(use)
   use "williamboman/mason.nvim" -- simple to use language server installer
   use "williamboman/mason-lspconfig.nvim" -- simple to use language server installer
   use 'jose-elias-alvarez/null-ls.nvim' -- LSP diagnostics and code actions
-
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
