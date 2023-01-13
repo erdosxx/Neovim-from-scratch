@@ -63,7 +63,7 @@ local options = {
   -- termguicolors = true,
   -- time to wait for a mapped sequence to complete (in milliseconds)
   -- Default = 1000
-  timeoutlen = 100,
+  timeoutlen = 700,
   -- enable persistent undo even after saving
   undofile = true,
   -- faster completion (4000ms default)
@@ -80,13 +80,13 @@ local options = {
   -- insert 4 spaces for a tab
   tabstop = 2,
   -- highlight the current line
-  cursorline = true,
+  cursorline = false,
   -- set numbered lines
   number = true,
   -- set relative numbered lines
   relativenumber = true,
   -- set number column width to 2 {default 4}
-  numberwidth = 4,
+  numberwidth = 3,
   -- always show the sign column, otherwise it would shift the text each time
   signcolumn = "yes",
   -- display lines as one long line
