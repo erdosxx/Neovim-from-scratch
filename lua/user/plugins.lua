@@ -89,6 +89,9 @@ return packer.startup(function(use)
   use 'nvim-telescope/telescope-media-files.nvim'
 
   use 'jose-elias-alvarez/null-ls.nvim' -- LSP diagnostics and code actions
+  -- automatically highlighting other uses of the word under the cursor using either LSP
+  use "RRethy/vim-illuminate"
+
 
   -- Treesitter
   use {
