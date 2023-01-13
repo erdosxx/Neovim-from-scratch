@@ -11,7 +11,7 @@ local options = {
   -- keep 10000 lines of command line history (default = 10000)
   history = 10000,
   -- more space in the neovim command line for displaying messages
-  cmdheight = 2,
+  cmdheight = 1,
   -- do incremental searching (default = true)
   incsearch = true,
   -- Enable folding: Lines with equal indent form a fold.

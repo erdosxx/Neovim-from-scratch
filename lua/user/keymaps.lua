@@ -35,6 +35,11 @@ keymap("n", "<C-j>", "<C-w>j", opts)
 keymap("n", "<C-k>", "<C-w>k", opts)
 keymap("n", "<C-l>", "<C-w>l", opts)
 
+-- Resize to full windth window
+keymap("n", "<localleader>|", "<C-w>|", opts)
+-- Resize to equal windth window
+keymap("n", "<localleader>=", "<C-w>=", opts)
+
 -- Put file explore to Left with size 30
 keymap("n", "<localleader>e", ":Lexplore 30<cr>", opts)
 
