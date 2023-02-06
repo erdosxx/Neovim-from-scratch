@@ -1,6 +1,5 @@
 local opts = { noremap = true, silent = true }
 
-
 -- Shorten function name
 local keymap = vim.api.nvim_set_keymap
 
@@ -16,7 +15,7 @@ vim.g.maplocalleader = " "
 --   visual_block_mode = "x",
 --   term_mode = "t",
 --   command_mode = "c",
---   operator-pening = "o" 
+--   operator-pening = "o"
 
 -- Normal --
 -- Don't use Ex mode, use Q for formatting
@@ -26,7 +25,7 @@ vim.g.maplocalleader = " "
 keymap("n", "Q", "gq", opts)
 
 -- change word to upper case in normal mode.
-keymap ("n", "<leader><C-u>", "viwUw", opts)
+keymap("n", "<leader><C-u>", "viwUw", opts)
 
 -- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)
@@ -40,7 +39,7 @@ keymap("n", "<localleader>|", "<C-w>|", opts)
 keymap("n", "<localleader>=", "<C-w>=", opts)
 
 -- Put file explore to Left with size 30
-keymap("n", "<localleader>e", ":Lexplore 30<cr>", opts)
+-- keymap("n", "<localleader>e", ":Lexplore 30<cr>", opts)
 
 -- Edit $MYVIMRC in vertical split window
 keymap("n", "<leader>ev", ":vsplit $MYNVIMLUARC<CR>", opts)
@@ -54,7 +53,7 @@ keymap("n", "<leader>uv", ":vsplit $MYURXVTRC<CR>", opts)
 keymap("n", "<leader>su", "!xrdb $HOME/.Xresources<CR>", opts)
 
 -- Add " to start and end of word. Ex) word -> "word"
-keymap("n", "<leader>\"", "viw<esc>a\"<esc>bi\"<esc>lel", opts)
+keymap("n", '<leader>"', 'viw<esc>a"<esc>bi"<esc>lel', opts)
 -- Add ' to start and end of word. Ex) word -> 'word'
 keymap("n", "<leader>'", "viw<esc>a'<esc>bi'<esc>lel", opts)
 
@@ -79,7 +78,7 @@ keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
 
 -- change word to upper case in insert mode.
-keymap ("i", "<leader><C-u>", "<ESC>lviwUwi", opts)
+keymap("i", "<leader><C-u>", "<ESC>lviwUwi", opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -94,7 +93,7 @@ keymap("v", "<A-k>", ":m .-2<CR>==", opts)
 keymap("v", "p", '"_dP', opts)
 
 -- Add " to start and end of word. Ex) word -> "word"
-keymap("v", "<leader>\"", "<ESC>`>a\"<ESC>`<i\"<ESC>", opts)
+keymap("v", '<leader>"', '<ESC>`>a"<ESC>`<i"<ESC>', opts)
 -- Add ' to start and end of word. Ex) word -> 'word'
 keymap("v", "<leader>'", "<ESC>`>a'<ESC>`<i'<ESC>", opts)
 
@@ -119,5 +118,5 @@ keymap("v", "<localleader>r", ":JupyterSendRange<CR> :<C-u>normal! `><CR>", opts
 keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts)
 keymap("n", "<localleader>f", ":Format<cr>", opts)
 -- keymap("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
-keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
+-- keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("n", "<c-t>", "<cmd>Telescope live_grep<cr>", opts)
