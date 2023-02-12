@@ -5,7 +5,7 @@ local servers = {
 	"jsonls",
 	"texlab",
 	"pyright",
-	"sumneko_lua",
+	"sumneko_lua", -- will be replaced by "lua_ls"
 	"tsserver",
 	"yamlls",
 	"julials",
@@ -38,6 +38,11 @@ end
 local opts = {}
 
 for _, server in pairs(servers) do
+	-- Ref: https://www.reddit.com/r/neovim/comments/1107xiz/how_to_fix_sumneko_lua_is_deprecated_use_lua_ls/
+	if server == "sumneko_lua" then
+		server = "lua_ls"
+	end
+
 	opts = {
 		on_attach = require("user.lsp.handlers").on_attach,
 		capabilities = require("user.lsp.handlers").capabilities,
