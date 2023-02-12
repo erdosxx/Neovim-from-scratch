@@ -1,5 +1,6 @@
 local helpers = require("user.LuaSnip.luasnip-helper-funcs")
 local get_visual = helpers.get_visual
+local isempty = helpers.isempty
 
 local ls = require("luasnip")
 local s = ls.snippet
@@ -20,6 +21,8 @@ local l = extras.lambda
 local m = extras.match
 
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
+
+ls.filetype_extend("tex", { "python" })
 
 local tex_utils = {}
 tex_utils.in_mathzone = function()
@@ -45,14 +48,6 @@ tex_utils.in_tikz = function()
 	return tex_utils.in_env("tikzpicture")
 end
 
-local function fn(args, parent, user_args)
-	return "[" .. args[1][1] .. user_args .. "]"
-end
-
-local function reused_func(_, _, user_args)
-	return user_args
-end
-
 local function count(_, _, old_state)
 	old_state = old_state or {
 		updates = 0,
@@ -69,7 +64,138 @@ local function count(_, _, old_state)
 end
 
 local function simple_restore(args, _)
-	return sn(nil, { i(1, args[1]), r(2, "dyn", i(nil, "user_text")) })
+	return sn(nil, { i(1, args[1]), t("--"), r(2, "", i(nil, "user_text")) })
+end
+
+local function simple_restore_old(args, _)
+	return sn(nil, { i(1, args[1]), t("--"), i(2, "user_text") })
+end
+
+local mat = function(_, parent)
+	local rows = tonumber(parent.captures[2])
+	local cols = tonumber(parent.captures[3])
+	local nodes = {}
+	local jump_index = 1
+
+	for row = 1, rows do
+		table.insert(nodes, r(jump_index, tostring(row) .. "x1", i(1)))
+		jump_index = jump_index + 1
+
+		for col = 2, cols do
+			table.insert(nodes, t(" & "))
+			table.insert(
+				nodes,
+				r(jump_index, tostring(row) .. "x" .. tostring(col), i(1))
+			)
+			jump_index = jump_index + 1
+		end
+		table.insert(nodes, t({ "\\\\", "" }))
+	end
+	-- fix last node
+	nodes[#nodes] = t("\\\\")
+	return sn(nil, nodes)
+end
+
+local mat2 = function(_, parent)
+	local rows = tonumber(parent.captures[2])
+	local cols = tonumber(parent.captures[3])
+	local nodes = {}
+	local jump_index = 1
+
+	for _ = 1, rows do
+		table.insert(
+			nodes,
+			--[[ r(ins_indx, tostring(row) .. "x1", { i(1), t("x") }) ]]
+			i(jump_index, tostring(jump_index))
+		)
+		jump_index = jump_index + 1
+
+		for _ = 2, cols do
+			table.insert(nodes, t(" & "))
+			table.insert(nodes, i(jump_index, tostring(jump_index)))
+			jump_index = jump_index + 1
+		end
+		table.insert(nodes, t({ "\\\\", "" }))
+	end
+	-- fix last node
+	nodes[#nodes] = t("\\\\")
+	return sn(nil, nodes)
+end
+
+-- integral functions
+-- generate \int_{<>}^{<>}
+local int1 = function(_, snip)
+	local vars = tonumber(snip.captures[1])
+	local nodes = {}
+	for j = 1, vars do
+		table.insert(nodes, t("\\int_{"))
+		table.insert(nodes, r(2 * j - 1, "lb" .. tostring(j), i(1)))
+		table.insert(nodes, t("}^{"))
+		table.insert(nodes, r(2 * j, "ub" .. tostring(j), i(1)))
+		table.insert(nodes, t("}"))
+	end
+	return sn(nil, nodes)
+end
+
+-- generate \dd <>
+local int2 = function(_, snip)
+	local vars = tonumber(snip.captures[1])
+	local nodes = {}
+	for j = 1, vars do
+		table.insert(nodes, t(" \\dd "))
+		table.insert(nodes, r(j, "var" .. tostring(j), i(1)))
+	end
+	return sn(nil, nodes)
+end
+
+local get_i_times = function(_, parent)
+	local inum = tonumber(parent.parent.captures[1])
+	local res = string.rep("i", inum)
+	return res
+end
+
+local autosnippet =
+	ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
+
+local generate_label = function(_, _, _, user_args)
+	local delims = { "[", "]" }
+	if user_args[2] ~= "xargs" then
+		delims = { "\\label{", "}" } -- chooses surrounding environment
+	end
+
+	if isempty(user_args[1]) then -- creates a general label
+		return sn(nil, fmta([[\label{<>}]], { i(1) }))
+	else -- creates a specialized label
+		return sn(
+			nil,
+			fmta(
+				[[<><>:<><>]],
+				{ t(delims[1]), t(user_args[1]), i(1), t(delims[2]) }
+			)
+		)
+	end
+end
+
+local round_bar = function(args, _, user_args)
+	return user_args[1] .. string.rep("-", #args[1][1] + 2) .. user_args[2]
+end
+
+local capture = function(_, parent, user_args)
+	return parent.captures[user_args]
+end
+
+local is_need_space = function(args)
+	local input_first_str = args[1][1]:sub(1, 1)
+	print(input_first_str)
+
+	local not_word_chars = { ",", ".", "?", "-", " " }
+	for _, nw_char in ipairs(not_word_chars) do
+		if input_first_str == nw_char then
+			return ""
+		end
+	end
+
+	return " "
 end
 
 return {
@@ -87,9 +213,7 @@ return {
 			wordTrig = false,
 		},
 		fmta([[<>\frac{<>}{<>}]], {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
+			f(capture, {}, { user_args = { 1 } }),
 			i(1),
 			i(2),
 		})
@@ -140,41 +264,35 @@ return {
 			d(1, get_visual),
 		})
 	),
-	s(
-		{
-			trig = "mm",
-			dscr = "mm in the beginning of line generates $ capture_text $",
-			regTrig = true,
-			wordTrig = false,
-		},
-		fmta("<>$<>$", {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
-			d(1, get_visual),
-		}),
-		{ condition = line_begin }
-	),
-	s(
-		{
-			trig = "([^%a])mm",
-			dscr = "mm with non alpha numeric prefix generates $ capture_text $",
-			regTrig = true,
-			wordTrig = false,
-		},
-		fmta("<>$<>$", {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
-			d(1, get_visual),
-		})
-	),
+	--[[ s( ]]
+	--[[ 	{ ]]
+	--[[ 		trig = "mm", ]]
+	--[[ 		dscr = "mm in the beginning of line generates $ capture_text $", ]]
+	--[[ 		regTrig = true, ]]
+	--[[ 		wordTrig = false, ]]
+	--[[ 	}, ]]
+	--[[ 	fmta("<>$<>$", { ]]
+	--[[ 		f(capture, {}, { user_args = { 1 } }), ]]
+	--[[ 		d(1, get_visual), ]]
+	--[[ 	}), ]]
+	--[[ 	{ condition = line_begin } ]]
+	--[[ ), ]]
+	--[[ s( ]]
+	--[[ 	{ ]]
+	--[[ 		trig = "([^%a])mm", ]]
+	--[[ 		dscr = "mm with non alpha numeric prefix generates $ capture_text $", ]]
+	--[[ 		regTrig = true, ]]
+	--[[ 		wordTrig = false, ]]
+	--[[ 	}, ]]
+	--[[ 	fmta("<>$<>$", { ]]
+	--[[ 		f(capture, {}, { user_args = { 1 } }), ]]
+	--[[ 		d(1, get_visual), ]]
+	--[[ 	}) ]]
+	--[[ ), ]]
 	s(
 		{ trig = "([^%a])ee", regTrig = true, wordTrig = false },
 		fmta("<>e^{<>}", {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
+			f(capture, {}, { user_args = { 1 } }),
 			d(1, get_visual),
 		}),
 		{ condition = tex_utils.in_mathzone }
@@ -182,9 +300,7 @@ return {
 	s(
 		{ trig = "ee", regTrig = true, wordTrig = false },
 		fmta("<>e^{<>}", {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
+			f(capture, {}, { user_args = { 1 } }),
 			d(1, get_visual),
 		}),
 		{ condition = tex_utils.in_mathzone + line_begin }
@@ -197,9 +313,7 @@ return {
 			snippetType = "autosnippet",
 		},
 		fmta("<>_{<>}", {
-			f(function(_, snip)
-				return snip.captures[1]
-			end),
+			f(capture, {}, { user_args = { 1 } }),
 			i(0, "0"),
 			--[[ t("0"), ]]
 		})
@@ -259,12 +373,6 @@ return {
 		"ternary",
 		{ i(1, "cond"), t(" ? "), i(2, "then"), t(" : "), i(3, "else") }
 	),
-	s(
-		{ trig = "b([^%d]+)", regTrig = true },
-		f(function(args, snip)
-			return "Captured Text: " .. snip.captures[1] .. "."
-		end, {})
-	),
 	s("isn2", {
 		isn(
 			1,
@@ -307,7 +415,7 @@ return {
 		m({ 1, 2 }, l._1:match("^" .. l._2 .. "$"), l._1:gsub("a", "e")),
 	}),
 	s("extras4", { i(1), t({ "", "" }), extras.rep(1) }),
-	s("extras5", { extras.partial(os.date, "%Y %M %b") }),
+	s("today", { extras.partial(os.date, "%F"), t(" ") }),
 	s(
 		"extras6",
 		{ i(1, ""), t({ "", "" }), extras.nonempty(1, "not empty!", "empty!") }
@@ -327,9 +435,308 @@ return {
 			["user_text"] = i(1, "default_text"),
 		},
 	}),
+	s({ trig = "paren_change2", desc = "Same as paren_change" }, {
+		c(1, {
+			sn(
+				nil,
+				{ t("("), r(1, "user_text", i(1, "default_text")), t(")") }
+			),
+			sn(
+				nil,
+				{ t("["), r(1, "user_text", i(1, "default_text")), t("]") }
+			),
+			sn(
+				nil,
+				{ t("{"), r(1, "user_text", i(1, "default_text")), t("}") }
+			),
+		}),
+	}),
 	s("rest", {
 		i(1, "preset"),
 		t({ "", "" }),
-		d(2, simple_restore, 1),
+		d(2, simple_restore, { 1 }),
 	}),
+	s("rest_o", {
+		i(1, "preset"),
+		t({ "", "" }),
+		d(2, simple_restore_old, { 1 }),
+	}),
+	s("sign", t({ "Yours sincerely,", "", "Norel Oh" })),
+	s(
+		{
+			trig = "(%a)(%d)",
+			name = "auto subscript",
+			dscr = "subscript for 1 digit",
+			regTrig = true,
+		},
+		fmta([[<>_<>]], {
+			f(capture, {}, { user_args = { 1 } }),
+			f(capture, {}, { user_args = { 2 } }),
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	s(
+		{
+			trig = "(%a)_(%d+)",
+			name = "auto subscript 2+",
+			dscr = "auto subscript for 2+ digits",
+			regTrig = true,
+		},
+		fmta([[<>_{<>}]], {
+			f(capture, {}, { user_args = { 1 } }),
+			f(capture, {}, { user_args = { 2 } }),
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	postfix("+hat", { l("\\hat{" .. l.POSTFIX_MATCH .. "}") }, {
+		condition = tex_utils.in_mathzone,
+	}),
+	s(
+		{ trig = "([%a\\]+)hat", name = "hats", dscr = "hats", regTrig = true },
+		fmta([[\hat{<>}]], {
+			f(capture, {}, { user_args = { 1 } }),
+		})
+	),
+	s(
+		{ trig = "lrv", name = "left right", dscr = "left right" },
+		fmta([[\left(<>\right)<>]], {
+			f(function(_, snip)
+				local res, env = {}, snip.env
+				for _, val in ipairs(env.LS_SELECT_RAW) do
+					table.insert(res, val)
+				end
+				return res
+			end, {}),
+			i(0),
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	s(
+		{ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
+		fmta([[\mintinline{<>}<>]], {
+			i(1, "text"),
+			c(2, {
+				sn(nil, { t("{"), i(1), t("}") }),
+				sn(nil, { t("|"), i(1), t("|") }),
+			}),
+		})
+	),
+	s(
+		{
+			trig = "([bBpvV])mat(%d+)x(%d+)([ar])",
+			name = "matrix",
+			dscr = "matrix trigger",
+			regTrig = true,
+		},
+		fmta(
+			[[
+      \begin{<>}<>
+      <>
+      \end{<>}
+      ]],
+			{
+				f(function(_, snip)
+					return snip.captures[1] .. "matrix"
+				end),
+				f(function(_, snip)
+					if snip.captures[4] == "a" then
+						out = string.rep("c", tonumber(snip.captures[3]) - 1)
+						return "[" .. out .. "|c]"
+					end
+					return ""
+				end),
+				d(1, mat2),
+				f(function(_, snip)
+					return snip.captures[1] .. "matrix"
+				end),
+			}
+		)
+	),
+	s(
+		{ trig = "set", name = "set", dscr = "set" },
+		fmta(
+			[[
+      \{<>\}<>
+      ]],
+			{
+				c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }) }),
+				i(0),
+			}
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d)int",
+			name = "multi integrals",
+			dscr = "please work",
+			regTrig = true,
+			hidden = false,
+		},
+		fmta([[<> <> <> <>]], {
+			c(1, {
+				fmta([[ \<><>nt_{<>} ]], {
+					c(1, { t(""), t("o") }),
+					f(get_i_times),
+					i(2),
+				}),
+				d(nil, int1),
+			}),
+			i(2),
+			d(3, int2),
+			i(0),
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	s(
+		{
+			trig = "#",
+			name = "generate label",
+			dscr = "generate \\section{$1}(\\label{sec:$1)",
+			hidden = true,
+			priority = 250,
+		},
+		fmta([[\section{<>}<><>]], {
+			i(1),
+			c(2, {
+				t(""),
+				d(1, generate_label, {}, { user_args = { { "sec", "" } } }),
+			}),
+			i(0),
+		})
+	),
+	s(
+		{
+			trig = "adef",
+			name = "add definition",
+			dscr = "add definition box",
+		},
+		fmta(
+			[[
+      \begin{definition}[<>]<>{<>}
+      \end{definition}
+      ]],
+			{
+				i(1),
+				c(2, {
+					t(""),
+					d(
+						1,
+						generate_label,
+						{},
+						{ user_args = { { "def", "xargs" } } }
+					),
+				}),
+				i(0),
+			}
+		)
+	),
+	s(
+		{
+			trig = "rbox",
+			name = "round box",
+			dscr = "generate surrounding box",
+		},
+		fmta(
+			[[
+      <>
+      | <> |
+      <>
+      ]],
+			{
+				f(round_bar, { 1 }, { user_args = { { "┌", "┐" } } }),
+				i(1),
+				f(round_bar, { 1 }, { user_args = { { "└", "┘" } } }),
+			}
+		)
+	),
+	s({ trig = "jmp", name = "test jump index", dscr = "dscr" }, {
+		i(1, "first"),
+		t(" "),
+		sn(2, { t(" "), i(2, "second"), t(" "), i(1, "third") }),
+	}),
+	autosnippet(
+		{
+			trig = "mm",
+			name = "inline math mode",
+			dscr = "inline math mode with adding automatic space",
+			wordTrig = true,
+		},
+		fmta([[$<>$<><>]], { i(1), f(is_need_space, { 2 }), i(2) }),
+		{ condition = tex_utils.in_text, show_condition = tex_utils.in_text }
+	),
+	autosnippet(
+		{
+			trig = "dm",
+			name = "display math",
+			dscr = "display math",
+			wordTrig = true,
+		},
+		fmta(
+			[[
+      \[
+        <>
+      \] <>
+      ]],
+			{ i(1), i(0) }
+		),
+		{ condition = tex_utils.in_text, show_condition = tex_utils.in_text }
+	),
+	autosnippet(
+		{ trig = "sr", name = "^2", dscr = "^2", wordTrig = false },
+		t("^2"),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "cb", name = "^3", dscr = "^3", wordTrig = false },
+		t("^3"),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "compl",
+			name = "complement",
+			dscr = "complement",
+			wordTrig = false,
+		},
+		t("^{c}"),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "td",
+			name = "superscript",
+			dscr = "superscript",
+			wordTrig = false,
+		},
+		fmta([[^{<>}<>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
 }

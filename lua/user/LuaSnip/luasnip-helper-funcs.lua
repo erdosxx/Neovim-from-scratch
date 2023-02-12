@@ -13,4 +13,19 @@ function M.get_visual(args, parent)
 	end
 end
 
+function M.isempty(s)
+	return s == nil or s == ""
+end
+
+-- third argument is old_state, which we don't use
+function M.get_visual_new(args, parent, _, user_args)
+	local ret = (not M.isempty(user_args)) and user_args or ""
+
+	if #parent.snippet.env.SELECT_RAW > 0 then
+		return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
+	else -- If SELECT_RAW is empty, return a blank insert node
+		return sn(nil, i(1, ret))
+	end
+end
+
 return M
