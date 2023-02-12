@@ -1,5 +1,6 @@
 local helpers = require("user.LuaSnip.luasnip-helper-funcs")
 local get_visual = helpers.get_visual
+local get_visual_str = helpers.get_visual_str
 local isempty = helpers.isempty
 
 local ls = require("luasnip")
@@ -184,6 +185,30 @@ local capture = function(_, parent, user_args)
 	return parent.captures[user_args]
 end
 
+local capture_frac = function(_, parent, user_args)
+	local cap_str = parent.captures[user_args]
+	print(cap_str)
+	local depth = 0
+	local idx = #cap_str
+
+	while true do
+		local cap_str_at_idx = cap_str:sub(idx, idx)
+		if cap_str_at_idx == ")" then
+			depth = depth + 1
+		elseif cap_str_at_idx == "(" then
+			depth = depth - 1
+		end
+		if depth == 0 then
+			break
+		end
+		idx = idx - 1
+	end
+	return cap_str:sub(1, idx - 1)
+		.. "\\frac{"
+		.. cap_str:sub(idx + 1, -2)
+		.. "}"
+end
+
 local is_need_space = function(args)
 	local input_first_str = args[1][1]:sub(1, 1)
 	print(input_first_str)
@@ -206,18 +231,6 @@ return {
 		trig = "tt",
 		dscr = "Expands 'tt' into '\texttt{}'",
 	}, fmta("\\textt{<>}", { i(1) })),
-	s(
-		{
-			trig = "([^%a])ff",
-			regTrig = true,
-			wordTrig = false,
-		},
-		fmta([[<>\frac{<>}{<>}]], {
-			f(capture, {}, { user_args = { 1 } }),
-			i(1),
-			i(2),
-		})
-	),
 	s(
 		{ trig = "eq", desc = "A LaTeX equation environment" },
 		fmta(
@@ -264,31 +277,6 @@ return {
 			d(1, get_visual),
 		})
 	),
-	--[[ s( ]]
-	--[[ 	{ ]]
-	--[[ 		trig = "mm", ]]
-	--[[ 		dscr = "mm in the beginning of line generates $ capture_text $", ]]
-	--[[ 		regTrig = true, ]]
-	--[[ 		wordTrig = false, ]]
-	--[[ 	}, ]]
-	--[[ 	fmta("<>$<>$", { ]]
-	--[[ 		f(capture, {}, { user_args = { 1 } }), ]]
-	--[[ 		d(1, get_visual), ]]
-	--[[ 	}), ]]
-	--[[ 	{ condition = line_begin } ]]
-	--[[ ), ]]
-	--[[ s( ]]
-	--[[ 	{ ]]
-	--[[ 		trig = "([^%a])mm", ]]
-	--[[ 		dscr = "mm with non alpha numeric prefix generates $ capture_text $", ]]
-	--[[ 		regTrig = true, ]]
-	--[[ 		wordTrig = false, ]]
-	--[[ 	}, ]]
-	--[[ 	fmta("<>$<>$", { ]]
-	--[[ 		f(capture, {}, { user_args = { 1 } }), ]]
-	--[[ 		d(1, get_visual), ]]
-	--[[ 	}) ]]
-	--[[ ), ]]
 	s(
 		{ trig = "([^%a])ee", regTrig = true, wordTrig = false },
 		fmta("<>e^{<>}", {
@@ -338,14 +326,6 @@ return {
 			}
 		),
 		{ condition = line_begin }
-	),
-	s(
-		{ trig = "ff" },
-		fmta("\\frac{<>}{<>}", {
-			i(1),
-			i(2),
-		}),
-		{ condition = tex_utils.in_mathzone }
 	),
 	s(
 		{ trig = "dd" },
@@ -734,6 +714,133 @@ return {
 			wordTrig = false,
 		},
 		fmta([[^{<>}<>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "//", name = "fraction", dscr = "fraction" },
+		fmta([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d+)/",
+			name = "digit+ fraction",
+			dscr = "digit+ fraction",
+			regTrig = true,
+			wordTrig = false,
+			priority = 250,
+		},
+		fmta(
+			[[\frac{<>}{<>}<>]],
+			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d*\\?[A-Za-z]+^%d)/",
+			name = "digit + \\ + ^  fraction",
+			dscr = "6\\pi^2 fraction",
+			regTrig = true,
+			wordTrig = false,
+			priority = 500,
+		},
+		fmta(
+			[[\frac{<>}{<>}<>]],
+			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d*\\?[A-Za-z]+^{%d+})/",
+			name = "digit + \\ + ^  fraction",
+			dscr = "6\\pi^{22} fraction",
+			regTrig = true,
+			wordTrig = false,
+			priority = 500,
+		},
+		fmta(
+			[[\frac{<>}{<>}<>]],
+			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d*\\?[A-Za-z]+_%d)/",
+			name = "digit + \\ + _  fraction",
+			dscr = "a_2 fraction",
+			regTrig = true,
+			wordTrig = false,
+			priority = 500,
+		},
+		fmta(
+			[[\frac{<>}{<>}<>]],
+			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(%d*\\?[A-Za-z]+_{%d+})/",
+			name = "digit + \\ + _{}  fraction",
+			dscr = "a_{22} fraction",
+			regTrig = true,
+			wordTrig = false,
+			priority = 500,
+		},
+		fmta(
+			[[\frac{<>}{<>}<>]],
+			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "^(.*%))/",
+			name = "() fraction",
+			dscr = "() fraction",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta(
+			[[<>{<>}<>]],
+			{ f(capture_frac, {}, { user_args = { 1 } }), i(1), i(0) }
+		),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	s(
+		{ trig = "/", dscr = "Expands 'tii' into LaTeX's textit{} command." },
+		fmta([[\frac{<>}{<>}<>]], {
+			f(get_visual_str),
+			i(1),
+			i(0),
+		}),
 		{
 			condition = tex_utils.in_mathzone,
 			show_condition = tex_utils.in_mathzone,
