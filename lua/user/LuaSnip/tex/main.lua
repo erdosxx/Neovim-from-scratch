@@ -1,4 +1,6 @@
 local helpers = require("user.LuaSnip.luasnip-helper-funcs")
+local tex_utils = require("user.LuaSnip.vimtex-helper-funcs")
+
 local get_visual = helpers.get_visual
 local get_visual_str = helpers.get_visual_str
 local isempty = helpers.isempty
@@ -24,30 +26,6 @@ local m = extras.match
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
 
 ls.filetype_extend("tex", { "python" })
-
-local tex_utils = {}
-tex_utils.in_mathzone = function()
-	return vim.fn["vimtex#syntax#in_mathzone"]() == 1
-end
-tex_utils.in_text = function()
-	return not tex_utils.in_mathzone()
-end
-tex_utils.in_comment = function()
-	return vim.fn["vimtex#syntax#in_comment"]() == 1
-end
-tex_utils.in_env = function(name)
-	local is_inside = vim.fn["vimtex#env#is_inside"](name)
-	return (is_inside[1] > 0 and is_inside[2] > 0)
-end
-tex_utils.in_equation = function()
-	return tex_utils.in_env("equation")
-end
-tex_utils.in_itemize = function()
-	return tex_utils.in_env("itemize")
-end
-tex_utils.in_tikz = function()
-	return tex_utils.in_env("tikzpicture")
-end
 
 local function count(_, _, old_state)
 	old_state = old_state or {
@@ -252,7 +230,7 @@ local captureWolfram = function(_, parent, user_args)
 	return runWolframCmd(wolframCmd)
 end
 
-return {
+local snips = {
 	s({ trig = ";a", snippetType = "autosnippet" }, { t("\\alpha") }),
 	s({ trig = ";b", snippetType = "autosnippet" }, { t("\\beta") }),
 	s({ trig = ";g", snippetType = "autosnippet" }, { t("\\gamma") }),
@@ -312,7 +290,7 @@ return {
 			f(capture, {}, { user_args = { 1 } }),
 			d(1, get_visual),
 		}),
-		{ condition = tex_utils.in_mathzone }
+		tex_utils.context_math
 	),
 	s(
 		{ trig = "ee", regTrig = true, wordTrig = false },
@@ -366,12 +344,12 @@ return {
 	s(
 		{ trig = "df", snippetType = "autosnippet" },
 		{ t("\\diff") },
-		{ condition = tex_utils.in_mathzone }
+		tex_utils.context_math
 	),
 	s(
 		{ trig = "sd", snippetType = "autosnippet", wordTrig = false },
 		fmta("_{\\mathrm{<>}}", { d(1, get_visual) }),
-		{ condition = tex_utils.in_mathzone }
+		tex_utils.context_math
 	),
 	postfix(".br", {
 		f(function(_, parent)
@@ -482,10 +460,7 @@ return {
 			f(capture, {}, { user_args = { 1 } }),
 			f(capture, {}, { user_args = { 2 } }),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{
@@ -498,18 +473,12 @@ return {
 			f(capture, {}, { user_args = { 1 } }),
 			f(capture, {}, { user_args = { 2 } }),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "hat", name = "prefix hat", dscr = "prefix hat" },
 		fmta([[\hat{<>}<>]], { i(1), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -522,18 +491,12 @@ return {
 		fmta([[\hat{<>}]], {
 			f(capture, {}, { user_args = { 1 } }),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "bar", name = "prefix bar", dscr = "prefix bar" },
 		fmta([[\overline{<>}<>]], { i(1), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -546,10 +509,7 @@ return {
 		fmta([[\overline{<>}]], {
 			f(capture, {}, { user_args = { 1 } }),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{ trig = "lrv", name = "left right", dscr = "left right" },
@@ -563,10 +523,7 @@ return {
 			end, {}),
 			i(0),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
@@ -620,10 +577,7 @@ return {
 				i(0),
 			}
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -646,10 +600,7 @@ return {
 			d(3, int2),
 			i(0),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{
@@ -748,52 +699,29 @@ return {
 	autosnippet(
 		{ trig = "sr", name = "^2", dscr = "^2", wordTrig = false },
 		t("^2"),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "cb", name = "^3", dscr = "^3", wordTrig = false },
 		t("^3"),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
-	autosnippet(
-		{
-			trig = "compl",
-			name = "complement",
-			dscr = "complement",
-			wordTrig = false,
-		},
-		t("^{c}"),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
-	),
-	autosnippet(
-		{
-			trig = "td",
-			name = "superscript",
-			dscr = "superscript",
-			wordTrig = false,
-		},
-		fmta([[^{<>}<>]], { i(1), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
-	),
+	autosnippet({
+		trig = "compl",
+		name = "complement",
+		dscr = "complement",
+		wordTrig = false,
+	}, t("^{c}"), tex_utils.context_math),
+	autosnippet({
+		trig = "td",
+		name = "superscript",
+		dscr = "superscript",
+		wordTrig = false,
+	}, fmta([[^{<>}<>]], { i(1), i(0) }), tex_utils.context_math),
 	autosnippet(
 		{ trig = "//", name = "fraction", dscr = "fraction" },
 		fmta([[\frac{<>}{<>} <>]], { i(1), i(2), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -808,10 +736,7 @@ return {
 			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -826,10 +751,7 @@ return {
 			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -844,10 +766,7 @@ return {
 			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -862,10 +781,7 @@ return {
 			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -880,10 +796,7 @@ return {
 			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -897,10 +810,7 @@ return {
 			[[<>{<>} <>]],
 			{ f(capture_frac, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{ trig = "/", dscr = "frac with visual str" },
@@ -909,10 +819,7 @@ return {
 			i(1),
 			i(0),
 		}),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -921,10 +828,7 @@ return {
 			dscr = "make input wolfram mathematica",
 		},
 		fmta([[math <> math<>]], { i(1, "Mathematica expression"), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	s(
 		{
@@ -935,10 +839,7 @@ return {
 			wordTrig = false,
 		},
 		fmta([[<>]], { f(captureWolfram, {}, { user_args = { 1 } }) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -949,10 +850,7 @@ return {
 			wordTrig = false,
 		},
 		fmta([[\vec{<>}]], { f(capture, {}, { user_args = { 1 } }) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{
@@ -963,123 +861,86 @@ return {
 			wordTrig = false,
 		},
 		fmta([[\vec{<>}]], { f(capture, {}, { user_args = { 1 } }) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "!>", name = "mapsto", dscr = "\\mapsto", wordTrig = false },
 		{ t("\\mapsto ") },
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "->", name = "to", dscr = "\\to", wordTrig = false },
 		{ t("\\to ") },
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
-	autosnippet({
-		trig = "([^\\])int",
-		name = "int",
-		dscr = "\\int",
-		regTrig = true,
-		wordTrig = false,
-	}, { f(capture, {}, { user_args = { 1 } }), t("\\int") }, {
-		condition = tex_utils.in_mathzone,
-		show_condition = tex_utils.in_mathzone,
-	}),
-	autosnippet({
-		trig = "([^\\])zeta",
-		name = "zeta",
-		dscr = "\\zeta",
-		regTrig = true,
-		wordTrig = false,
-	}, { f(capture, {}, { user_args = { 1 } }), t("\\zeta") }, {
-		condition = tex_utils.in_mathzone,
-		show_condition = tex_utils.in_mathzone,
-	}),
-	autosnippet({
-		trig = "([^\\])pi",
-		name = "pi",
-		dscr = "\\pi",
-		regTrig = true,
-		wordTrig = false,
-	}, { f(capture, {}, { user_args = { 1 } }), t("\\pi") }, {
-		condition = tex_utils.in_mathzone,
-		show_condition = tex_utils.in_mathzone,
-	}),
-	autosnippet({
-		trig = "([^\\])arctan",
-		name = "arctan",
-		dscr = "\\arctan",
-		regTrig = true,
-		wordTrig = false,
-	}, { f(capture, {}, { user_args = { 1 } }), t("\\arctan") }, {
-		condition = tex_utils.in_mathzone,
-		show_condition = tex_utils.in_mathzone,
-	}),
-	autosnippet({
-		trig = "([^\\])exp",
-		name = "exp",
-		dscr = "\\exp",
-		regTrig = true,
-		wordTrig = false,
-	}, { f(capture, {}, { user_args = { 1 } }), t("\\exp") }, {
-		condition = tex_utils.in_mathzone,
-		show_condition = tex_utils.in_mathzone,
-	}),
 	autosnippet(
 		{ trig = "sq", name = "sqrt", dscr = "sqrt", wordTrig = false },
 		fmta([[\sqrt{<>}<>]], { i(1), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "fun", name = "function R to R", dscr = "f: \\R \to \\R:" },
 		fmta([[f: <> \R \to \R: <>]], { i(1), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
-	),
-	autosnippet(
-		{ trig = "cc", name = "subset", dscr = "\\subset", wordTrig = false },
-		{ t("\\subset") },
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "lim", name = "limit", dscr = "\\lim_{n} \to {\\infty}" },
 		fmta([[\lim_{<> \to <>} <>]], { i(1, "n"), i(2, "\\infty"), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "sum", name = "sum", dscr = "\\sum_{n=1}^{\\infty}" },
 		fmta([[\sum_{<>}^{<>} <>]], { i(1, "n=1"), i(2, "\\infty"), i(0) }),
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
 	),
 	autosnippet(
 		{ trig = "ooo", name = "infty", dscr = "\\infty", wordTrig = false },
 		{ t("\\infty") },
-		{
-			condition = tex_utils.in_mathzone,
-			show_condition = tex_utils.in_mathzone,
-		}
+		tex_utils.context_math
+	),
+	autosnippet(
+		{ trig = "cc", name = "subset", dscr = "\\subset", wordTrig = false },
+		{ t("\\subset") },
+		tex_utils.context_math
 	),
 }
+
+local math_funs = {
+	"arccos",
+	"arccot",
+	"arccsc",
+	"arcsec",
+	"arcsin",
+	"arctan",
+	"cos",
+	"cot",
+	"csc",
+	"exp",
+	"ln",
+	"log",
+	"perp",
+	"sin",
+	"star",
+	"arctan",
+	"int",
+	"pi",
+	"zeta",
+}
+
+for _, fun in ipairs(math_funs) do
+	local snip = autosnippet(
+		{
+			trig = "([^\\])" .. fun,
+			name = fun,
+			dscr = "\\" .. fun,
+			regTrig = true,
+			wordTrig = false,
+		},
+		{ f(capture, {}, { user_args = { 1 } }), t("\\" .. fun) },
+		tex_utils.context_math
+	)
+
+	table.insert(snips, snip)
+end
+
+return snips

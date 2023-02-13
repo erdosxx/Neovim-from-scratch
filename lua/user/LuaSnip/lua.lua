@@ -66,6 +66,7 @@ return {
 				i(6, "inputs"),
 				c(7, {
 					t(""),
+					t(", tex_utils.context_math"),
 					fmta(
 						[[, { condition=<>, show_condition=<> }]],
 						{ i(1, "tex_utils.in_mathzone"), rep(1) }
