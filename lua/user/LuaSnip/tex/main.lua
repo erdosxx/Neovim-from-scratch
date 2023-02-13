@@ -223,6 +223,35 @@ local is_need_space = function(args)
 	return " "
 end
 
+local runWolframCmd = function(wolframCmd)
+	local cmdFiltered = wolframCmd:gsub(" ", "")
+	local wolframRunner = "wolframscript -code 'ToString["
+	local cmd = wolframRunner .. cmdFiltered .. ",TeXForm]'"
+
+	local files = {}
+	local tmpfile = "/tmp/stmp.txt"
+	os.execute(cmd .. " > " .. tmpfile)
+
+	local f = io.open(tmpfile)
+	if not f then
+		return files
+	end
+
+	local line_no = 1
+	for line in f:lines() do
+		files[line_no] = line
+		line_no = line_no + 1
+	end
+
+	f:close()
+	return files[1]
+end
+
+local captureWolfram = function(_, parent, user_args)
+	local wolframCmd = parent.captures[user_args]
+	return runWolframCmd(wolframCmd)
+end
+
 return {
 	s({ trig = ";a", snippetType = "autosnippet" }, { t("\\alpha") }),
 	s({ trig = ";b", snippetType = "autosnippet" }, { t("\\beta") }),
@@ -474,14 +503,53 @@ return {
 			show_condition = tex_utils.in_mathzone,
 		}
 	),
-	postfix("+hat", { l("\\hat{" .. l.POSTFIX_MATCH .. "}") }, {
-		condition = tex_utils.in_mathzone,
-	}),
-	s(
-		{ trig = "([%a\\]+)hat", name = "hats", dscr = "hats", regTrig = true },
+	autosnippet(
+		{ trig = "hat", name = "prefix hat", dscr = "prefix hat" },
+		fmta([[\hat{<>}<>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "([%a\\]+)hat",
+			name = "suffix hat",
+			dscr = "suffix hat",
+			regTrig = true,
+			wordTrig = false,
+		},
 		fmta([[\hat{<>}]], {
 			f(capture, {}, { user_args = { 1 } }),
-		})
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "bar", name = "prefix bar", dscr = "prefix bar" },
+		fmta([[\overline{<>}<>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "([%a\\]+)bar",
+			name = "suffix bar",
+			dscr = "suffix bar",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta([[\overline{<>}]], {
+			f(capture, {}, { user_args = { 1 } }),
+		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
 	),
 	s(
 		{ trig = "lrv", name = "left right", dscr = "left right" },
@@ -721,7 +789,7 @@ return {
 	),
 	autosnippet(
 		{ trig = "//", name = "fraction", dscr = "fraction" },
-		fmta([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }),
+		fmta([[\frac{<>}{<>} <>]], { i(1), i(2), i(0) }),
 		{
 			condition = tex_utils.in_mathzone,
 			show_condition = tex_utils.in_mathzone,
@@ -737,7 +805,7 @@ return {
 			priority = 250,
 		},
 		fmta(
-			[[\frac{<>}{<>}<>]],
+			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -755,7 +823,7 @@ return {
 			priority = 500,
 		},
 		fmta(
-			[[\frac{<>}{<>}<>]],
+			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -773,7 +841,7 @@ return {
 			priority = 500,
 		},
 		fmta(
-			[[\frac{<>}{<>}<>]],
+			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -791,7 +859,7 @@ return {
 			priority = 500,
 		},
 		fmta(
-			[[\frac{<>}{<>}<>]],
+			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -809,7 +877,7 @@ return {
 			priority = 500,
 		},
 		fmta(
-			[[\frac{<>}{<>}<>]],
+			[[\frac{<>}{<>} <>]],
 			{ f(capture, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -826,7 +894,7 @@ return {
 			wordTrig = false,
 		},
 		fmta(
-			[[<>{<>}<>]],
+			[[<>{<>} <>]],
 			{ f(capture_frac, {}, { user_args = { 1 } }), i(1), i(0) }
 		),
 		{
@@ -835,12 +903,180 @@ return {
 		}
 	),
 	s(
-		{ trig = "/", dscr = "Expands 'tii' into LaTeX's textit{} command." },
-		fmta([[\frac{<>}{<>}<>]], {
+		{ trig = "/", dscr = "frac with visual str" },
+		fmta([[\frac{<>}{<>} <>]], {
 			f(get_visual_str),
 			i(1),
 			i(0),
 		}),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "math",
+			name = "wolfram math",
+			dscr = "make input wolfram mathematica",
+		},
+		fmta([[math <> math<>]], { i(1, "Mathematica expression"), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	s(
+		{
+			trig = "math (.*) math",
+			name = "evaluate Mathematica",
+			dscr = "Evaluate Mathematica Expression",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta([[<>]], { f(captureWolfram, {}, { user_args = { 1 } }) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(\\?%w+),%.",
+			name = "Vector postfix ,.",
+			dscr = "Vector postfix .,",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta([[\vec{<>}]], { f(capture, {}, { user_args = { 1 } }) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{
+			trig = "(\\?%w+)%.,",
+			name = "Vector postfix .,",
+			dscr = "Vector postfix .,",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta([[\vec{<>}]], { f(capture, {}, { user_args = { 1 } }) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "!>", name = "mapsto", dscr = "\\mapsto", wordTrig = false },
+		{ t("\\mapsto ") },
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "->", name = "to", dscr = "\\to", wordTrig = false },
+		{ t("\\to ") },
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet({
+		trig = "([^\\])int",
+		name = "int",
+		dscr = "\\int",
+		regTrig = true,
+		wordTrig = false,
+	}, { f(capture, {}, { user_args = { 1 } }), t("\\int") }, {
+		condition = tex_utils.in_mathzone,
+		show_condition = tex_utils.in_mathzone,
+	}),
+	autosnippet({
+		trig = "([^\\])zeta",
+		name = "zeta",
+		dscr = "\\zeta",
+		regTrig = true,
+		wordTrig = false,
+	}, { f(capture, {}, { user_args = { 1 } }), t("\\zeta") }, {
+		condition = tex_utils.in_mathzone,
+		show_condition = tex_utils.in_mathzone,
+	}),
+	autosnippet({
+		trig = "([^\\])pi",
+		name = "pi",
+		dscr = "\\pi",
+		regTrig = true,
+		wordTrig = false,
+	}, { f(capture, {}, { user_args = { 1 } }), t("\\pi") }, {
+		condition = tex_utils.in_mathzone,
+		show_condition = tex_utils.in_mathzone,
+	}),
+	autosnippet({
+		trig = "([^\\])arctan",
+		name = "arctan",
+		dscr = "\\arctan",
+		regTrig = true,
+		wordTrig = false,
+	}, { f(capture, {}, { user_args = { 1 } }), t("\\arctan") }, {
+		condition = tex_utils.in_mathzone,
+		show_condition = tex_utils.in_mathzone,
+	}),
+	autosnippet({
+		trig = "([^\\])exp",
+		name = "exp",
+		dscr = "\\exp",
+		regTrig = true,
+		wordTrig = false,
+	}, { f(capture, {}, { user_args = { 1 } }), t("\\exp") }, {
+		condition = tex_utils.in_mathzone,
+		show_condition = tex_utils.in_mathzone,
+	}),
+	autosnippet(
+		{ trig = "sq", name = "sqrt", dscr = "sqrt", wordTrig = false },
+		fmta([[\sqrt{<>}<>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "fun", name = "function R to R", dscr = "f: \\R \to \\R:" },
+		fmta([[f: <> \R \to \R: <>]], { i(1), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "cc", name = "subset", dscr = "\\subset", wordTrig = false },
+		{ t("\\subset") },
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "lim", name = "limit", dscr = "\\lim_{n} \to {\\infty}" },
+		fmta([[\lim_{<> \to <>} <>]], { i(1, "n"), i(2, "\\infty"), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "sum", name = "sum", dscr = "\\sum_{n=1}^{\\infty}" },
+		fmta([[\sum_{<>}^{<>} <>]], { i(1, "n=1"), i(2, "\\infty"), i(0) }),
+		{
+			condition = tex_utils.in_mathzone,
+			show_condition = tex_utils.in_mathzone,
+		}
+	),
+	autosnippet(
+		{ trig = "ooo", name = "infty", dscr = "\\infty", wordTrig = false },
+		{ t("\\infty") },
 		{
 			condition = tex_utils.in_mathzone,
 			show_condition = tex_utils.in_mathzone,

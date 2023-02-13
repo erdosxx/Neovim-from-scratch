@@ -155,11 +155,29 @@ return {
 		},
 		fmta(
 			[[
-      function(<>)
-      <>
+      function <>(<>)
+        <>
       end
       ]],
-			{ i(1, "args"), i(0) }
+			{ i(1, "name"), i(2, "args"), i(0) }
+		)
+	),
+	s(
+		{
+			trig = "bude",
+			name = "busted describe",
+			dscr = "busted describe format",
+		},
+		fmta(
+			[[
+      describe("<>", function()
+        it("Test <>", function()
+          <>
+        end)
+        <>
+      end)
+      ]],
+			{ i(1, "Test sets"), i(2, "name"), i(3, "test body"), i(0) }
 		)
 	),
 	s(
@@ -174,7 +192,7 @@ return {
 		)
 	),
 	s(
-		{ trig = "aseq", name = "assert euqal", dscr = "assert.are.same" },
+		{ trig = "asa", name = "assert same", dscr = "assert.are.same" },
 		fmta(
 			[[
       assert.are.same(<>, <>)
