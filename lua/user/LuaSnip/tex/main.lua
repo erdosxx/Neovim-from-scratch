@@ -905,7 +905,7 @@ local snips = {
 	),
 }
 
-local math_funs = {
+local math_symbs = {
 	"arccos",
 	"arccot",
 	"arccsc",
@@ -927,16 +927,16 @@ local math_funs = {
 	"zeta",
 }
 
-for _, fun in ipairs(math_funs) do
+for _, symb in ipairs(math_symbs) do
 	local snip = autosnippet(
 		{
-			trig = "([^\\])" .. fun,
-			name = fun,
-			dscr = "\\" .. fun,
+			trig = "([^\\])" .. symb,
+			name = symb,
+			dscr = "\\" .. symb,
 			regTrig = true,
 			wordTrig = false,
 		},
-		{ f(capture, {}, { user_args = { 1 } }), t("\\" .. fun) },
+		{ f(capture, {}, { user_args = { 1 } }), t("\\" .. symb) },
 		tex_utils.context_math
 	)
 
