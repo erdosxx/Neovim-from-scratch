@@ -42,7 +42,7 @@ keymap("n", "<localleader>=", "<C-w>=", opts)
 -- keymap("n", "<localleader>e", ":Lexplore 30<cr>", opts)
 
 -- Edit $MYVIMRC in vertical split window
-keymap("n", "<leader>ev", ":vsplit $MYNVIMLUARC<CR>", opts)
+keymap("n", "<leader>nv", ":vsplit $MYNVIMLUARC<CR>", opts)
 -- Read and apply $MYVIMRC
 -- keymap("n", "<leader>sv", ":source $MYNVIMLUARC<CR>", opts)
 -- Ref: https://stackoverflow.com/questions/72412720/how-to-source-init-lua-without-restarting-neovim
@@ -112,7 +112,12 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 --- Jupyter vim ---
-keymap("v", "<localleader>r", ":JupyterSendRange<CR> :<C-u>normal! `><CR>", opts)
+keymap(
+	"v",
+	"<localleader>r",
+	":JupyterSendRange<CR> :<C-u>normal! `><CR>",
+	opts
+)
 
 -- Nvimtree
 keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts)
