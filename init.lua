@@ -24,5 +24,7 @@ require("user.autocommands")
 require("user.reload")
 require("user.luaSnip")
 require("user.vimtex")
-require("user.copilot")
-require("user.copilot_cmp")
+--[[ require("user.copilot") ]]
+--[[ require("user.copilot_cmp") ]]
+require("user.chatgpt")
+require("user.neoai")

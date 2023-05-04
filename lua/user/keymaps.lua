@@ -125,3 +125,10 @@ keymap("n", "<localleader>f", ":Format<cr>", opts)
 -- keymap("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
 -- keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("n", "<c-t>", "<cmd>Telescope live_grep<cr>", opts)
+
+-- ChatGPT
+
+keymap("n", "<localleader>p", "<cmd>ChatGPT<cr>", opts)
+keymap("n", "<localleader>n", "<cmd>NeoAI<cr>", opts)
+keymap("n", "<localleader>t", "<cmd>NeoAIToggle<cr>", opts)
+keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
