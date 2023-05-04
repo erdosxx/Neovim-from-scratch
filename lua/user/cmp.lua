@@ -8,6 +8,11 @@ if not snip_status_ok then
 	return
 end
 
+local lspkind_status_ok, lspkind = pcall(require, "lspkind")
+if not lspkind_status_ok then
+	return
+end
+
 -- require("luasnip/loaders/from_vscode").lazy_load()
 
 local check_backspace = function()
@@ -45,6 +50,18 @@ local kind_icons = {
 }
 -- find more here: https://www.nerdfonts.com/cheat-sheet
 
+local has_words_before = function()
+	if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+		return false
+	end
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0
+		and vim.api
+				.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]
+				:match("^%s*$")
+			== nil
+end
+
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -64,10 +81,18 @@ cmp.setup({
 		}),
 		-- Accept currently selected item. If none selected, `select` first item.
 		-- Set `select` to `false` to only confirm explicitly selected items.
-		["<CR>"] = cmp.mapping.confirm({ select = true }),
+		--[[ ["<CR>"] = cmp.mapping.confirm({ select = true }), ]]
+		["<CR>"] = cmp.mapping.confirm({
+			-- this is the important line
+			behavior = cmp.ConfirmBehavior.Replace,
+			select = false,
+		}),
+		--[[ ["<Tab>"] = vim.schedule_wrap(function(fallback) ]]
 		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item()
+			--[[ if cmp.visible() then ]]
+			--[[ 	cmp.select_next_item() ]]
+			if cmp.visible() and has_words_before() then
+				cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
 			elseif luasnip.expandable() then
 				luasnip.expand()
 			elseif luasnip.expand_or_jumpable() then
@@ -98,19 +123,37 @@ cmp.setup({
 		fields = { "kind", "abbr", "menu" },
 		format = function(entry, vim_item)
 			-- Kind icons
-			vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+			--[[ vim_item.kind = string.format("%s", kind_icons[vim_item.kind]) ]]
 			-- vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
+			vim_item.kind =
+				lspkind.symbolic(vim_item.kind, { mode = "symbol" })
 			vim_item.menu = ({
+				copilot = "[Copilot]",
+				cmp_tabnine = "[TN]",
 				nvim_lsp = "[LSP]",
 				nvim_lua = "[NVIM_LUA]",
 				luasnip = "[Snippet]",
 				buffer = "[Buffer]",
 				path = "[Path]",
 			})[entry.source.name]
+			if entry.source.name == "cmp_tabnine" then
+				local detail = (entry.completion_item.labelDetails or {}).detail
+				vim_item.kind = ""
+				if detail and detail:find(".*%%.*") then
+					vim_item.kind = vim_item.kind .. " " .. detail
+				end
+				if (entry.completion_item.data or {}).multiline then
+					vim_item.kind = vim_item.kind .. " " .. "[ML]"
+				end
+			end
+			local maxwidth = 80
+			vim_item.abbr = string.sub(vim_item.abbr, 1, maxwidth)
 			return vim_item
 		end,
 	},
 	sources = {
+		{ name = "copilot" },
+		{ name = "cmp_tabnine" },
 		{ name = "nvim_lsp" },
 		{ name = "nvim_lua" },
 		{ name = "luasnip" },
