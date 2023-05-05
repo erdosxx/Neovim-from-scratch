@@ -122,9 +122,11 @@ keymap(
 -- Nvimtree
 keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts)
 keymap("n", "<localleader>f", ":Format<cr>", opts)
--- keymap("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
+
+-- Telescope
+keymap("n", "<C-s>", "<cmd>Telescope find_files<cr>", opts)
 -- keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
-keymap("n", "<c-t>", "<cmd>Telescope live_grep<cr>", opts)
+keymap("n", "<C-t>", "<cmd>Telescope live_grep<cr>", opts)
 
 -- ChatGPT
 
@@ -132,3 +134,14 @@ keymap("n", "<localleader>p", "<cmd>ChatGPT<cr>", opts)
 keymap("n", "<localleader>n", "<cmd>NeoAI<cr>", opts)
 keymap("n", "<localleader>t", "<cmd>NeoAIToggle<cr>", opts)
 keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
+
+-- Julia
+keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
+keymap(
+	"v",
+	"<localleader>u",
+	":JuliaREPLSendRegion<cr> :<C-u>normal! `><CR>",
+	opts
+)
+keymap("n", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)
+keymap("v", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)

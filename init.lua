@@ -28,3 +28,4 @@ require("user.vimtex")
 --[[ require("user.copilot_cmp") ]]
 require("user.chatgpt")
 require("user.neoai")
+require("user.julia_formatter")
