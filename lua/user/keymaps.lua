@@ -144,7 +144,9 @@ keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
 keymap(
 	"v",
 	"<localleader>u",
-	":JuliaREPLSendRegion<cr> :<C-u>normal! `><CR>",
+	-- Extend visual section to all lines and move to the last position(`>)
+	--[[ "V:JuliaREPLSendRegion<CR> :<C-u>normal! `><CR>", ]]
+	"V:JuliaREPLSendRegion<CR> <cmd>normal! `><CR>",
 	opts
 )
 keymap("n", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)

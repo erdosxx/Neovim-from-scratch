@@ -1,13 +1,12 @@
-local ok, copilot_cmp = pcall(require, "copilot_cmp")
-if not ok then
-	return
-end
+local copilot_cmp_format = require("copilot_cmp.format")
 
-copilot_cmp.setup({
+require("copilot_cmp").setup({
 	formatters = {
-		label = copilot_cmp.format.format_label_text,
+		label = copilot_cmp_format.format_label_text,
+		--[[ label = copilot_cmp.format.format_label_text, ]]
 		-- insert_text = copilot_cmp.format.format_insert_text,
-		insert_text = require("copilot_cmp.format").remove_existing,
-		preview = copilot_cmp.format.deindent,
+		insert_text = copilot_cmp_format.remove_existing,
+		preview = copilot_cmp_format.deindent,
+		--[[ preview = copilot_cmp.format.deindent, ]]
 	},
 })
