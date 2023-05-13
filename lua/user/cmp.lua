@@ -8,11 +8,6 @@ if not snip_status_ok then
 	return
 end
 
-local lspkind_status_ok, lspkind = pcall(require, "lspkind")
-if not lspkind_status_ok then
-	return
-end
-
 -- require("luasnip/loaders/from_vscode").lazy_load()
 
 local check_backspace = function()
@@ -47,6 +42,7 @@ local kind_icons = {
 	Event = "",
 	Operator = "",
 	TypeParameter = "",
+	Copilot = "",
 }
 -- find more here: https://www.nerdfonts.com/cheat-sheet
 
@@ -123,10 +119,8 @@ cmp.setup({
 		fields = { "kind", "abbr", "menu" },
 		format = function(entry, vim_item)
 			-- Kind icons
-			--[[ vim_item.kind = string.format("%s", kind_icons[vim_item.kind]) ]]
+			vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
 			-- vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-			vim_item.kind =
-				lspkind.symbolic(vim_item.kind, { mode = "symbol" })
 			vim_item.menu = ({
 				copilot = "[Copilot]",
 				cmp_tabnine = "[TN]",
