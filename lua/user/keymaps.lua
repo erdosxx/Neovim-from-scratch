@@ -140,6 +140,7 @@ keymap("n", "<localleader>t", "<cmd>NeoAIToggle<cr>", opts)
 keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
 
 -- Julia
+keymap("n", "<localleader>o", "<cmd>JuliaREPLConnect<cr>", opts)
 keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
 keymap(
 	"v",
@@ -151,3 +152,9 @@ keymap(
 )
 keymap("n", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)
 keymap("v", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)
+keymap(
+	"n",
+	"<localleader>/",
+	"V{:JuliaFormatterFormat<CR>}V{:JuliaREPLSend<CR>}",
+	opts
+)

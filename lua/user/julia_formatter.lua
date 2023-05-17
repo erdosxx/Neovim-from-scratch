@@ -9,3 +9,5 @@ vim.g.JuliaFormatter_options = {
 	whitespace_ops_in_indices = true,
 	remove_extra_newlines = true,
 }
+
+vim.g.JuliaFormatter_always_launch_server = 1
