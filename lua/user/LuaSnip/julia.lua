@@ -180,7 +180,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "([%a%d(]+)¬",
+			trig = "([%a%d(]+)@",
 			name = "::",
 			dscr = "input :: for type",
 			regTrig = true,

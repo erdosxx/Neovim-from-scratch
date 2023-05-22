@@ -63,7 +63,7 @@ local options = {
 	-- termguicolors = true,
 	-- time to wait for a mapped sequence to complete (in milliseconds)
 	-- Default = 1000
-	timeoutlen = 500,
+	timeoutlen = 300,
 	-- enable persistent undo even after saving
 	undofile = true,
 	-- faster completion (4000ms default)
