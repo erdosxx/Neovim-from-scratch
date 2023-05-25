@@ -123,7 +123,7 @@ return packer.startup(function(use)
 		cmd = "Copilot",
 		event = "InsertEnter",
 		config = function()
-			require("copilot").setup({})
+			require("user.copilot")
 		end,
 	})
 
@@ -131,7 +131,7 @@ return packer.startup(function(use)
 		"zbirenbaum/copilot-cmp",
 		after = { "copilot.lua" },
 		config = function()
-			require("copilot_cmp").setup()
+			require("user.copilot_cmp")
 		end,
 	})
 
