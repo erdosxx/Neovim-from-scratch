@@ -1,5 +1,6 @@
 local ls = require("luasnip")
 local s = ls.snippet
+local fmt = require("luasnip.extras.fmt").fmt
 local fmta = require("luasnip.extras.fmt").fmta
 local c = ls.choice_node
 local i = ls.insert_node
@@ -27,6 +28,36 @@ return {
 				i(1),
 				i(2),
 				i(3),
+				i(0),
+			}
+		),
+		{ condition = line_begin }
+	),
+	autosnippet(
+		{
+			trig = "da",
+			name = "def anonymous function",
+			dscr = "define anonymous function",
+		},
+		fmt(
+			[[
+      {} = {} -> {}
+      {}
+      ]],
+			{
+				i(1),
+				i(2),
+				c(3, {
+					fmt(
+						[[
+          begin
+            {}
+          end
+          ]],
+						{ i(1) }
+					),
+					fmt([[{}]], { i(1) }),
+				}),
 				i(0),
 			}
 		),
