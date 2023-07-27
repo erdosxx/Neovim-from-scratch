@@ -152,12 +152,10 @@ keymap(
 	"V:JuliaREPLSendRegion<CR> <cmd>normal! `><CR>",
 	opts
 )
-keymap("n", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)
-keymap("v", "<localleader>j", ":JuliaFormatterFormat<CR>", opts)
 keymap(
 	"n",
 	"<localleader>/",
-	"V%:JuliaFormatterFormat<CR>%V%:JuliaREPLSend<CR>%",
+	"V%:JuliaREPLSend<CR>%:Format<CR>",
 	opts_remap -- for using %, need to use remap
 )
 -- when cmp give choices,
