@@ -156,7 +156,6 @@ return packer.startup(function(use)
 
 	-- Julia
 	use("andreypopp/julia-repl-vim")
-	--[[ use("kdheepak/JuliaFormatter.vim") ]]
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins

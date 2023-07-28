@@ -1,13 +1,14 @@
 -- For more options:
--- https://domluna.github.io/JuliaFormatter.jl/stable/api/#JuliaFormatter.format_file-Tuple%7BAbstractString%7D
+-- https://domluna.github.io/JuliaFormatter.jl/stable/
 
 vim.g.JuliaFormatter_options = {
-	indent = 2,
-	margin = 79,
-	always_for_in = false,
-	whitespace_typedefs = true,
-	whitespace_ops_in_indices = true,
-	remove_extra_newlines = true,
+	style = "sciml",
+	indent = 2, -- default is 4
+	margin = 79, -- deafult is 92
+	--[[ always_for_in = false,  -- true for YAS ]]
+	--[[ whitespace_typedefs = true, -- false for YAS ]]
+	--[[ whitespace_ops_in_indices = true,  -- default for YAS ]]
+	--[[ remove_extra_newlines = true,  -- default for YAS ]]
 }
 
 vim.g.JuliaFormatter_always_launch_server = 1
