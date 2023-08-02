@@ -16,6 +16,37 @@ end
 
 return {
 	autosnippet(
+		{ trig = "tt", name = "@test", dscr = "define @test" },
+		fmta(
+			[[
+      @test <>
+      <>
+      ]],
+			{
+				i(1),
+				i(0),
+			}
+		),
+		{ condition = line_begin }
+	),
+	autosnippet(
+		{ trig = "ts", name = "test set", dscr = "define test set" },
+		fmta(
+			[[
+      @testset "<>" begin
+        <>
+      end
+      <>
+      ]],
+			{
+				i(1),
+				i(2),
+				i(0),
+			}
+		),
+		{ condition = line_begin }
+	),
+	autosnippet(
 		{ trig = "df", name = "def function", dscr = "define function" },
 		fmta(
 			[[
