@@ -162,7 +162,7 @@ keymap(
 keymap(
 	"n",
 	"<localleader>/",
-	"%:Format<CR>V%:JuliaREPLSend<CR>%",
+	"%:Format<CR>v%:JuliaREPLSend<CR>%$",
 	opts_remap -- for using %, need to use remap
 )
 -- when cmp give choices,

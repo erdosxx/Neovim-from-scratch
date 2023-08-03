@@ -66,7 +66,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "da",
+			trig = "dae",
 			name = "def anonymous function",
 			dscr = "define anonymous function",
 		},
@@ -89,6 +89,20 @@ return {
 					),
 					fmt([[{}]], { i(1) }),
 				}),
+				i(0),
+			}
+		),
+		{ condition = line_begin }
+	),
+	autosnippet(
+		{ trig = "dat", name = "abstract type", dscr = "define abstract type" },
+		fmta(
+			[[
+      abstract type <> end
+      <>
+      ]],
+			{
+				i(1),
 				i(0),
 			}
 		),
@@ -242,7 +256,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "([%a%d(]+)@",
+			trig = "([%a%d()]+)@",
 			name = "::",
 			dscr = "input :: for type",
 			regTrig = true,
