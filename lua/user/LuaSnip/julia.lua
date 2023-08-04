@@ -16,6 +16,23 @@ end
 
 return {
 	autosnippet(
+		{ trig = " do ", name = "do", dscr = "do end" },
+		fmta(
+			[[
+      do <>
+      <>
+      end
+      <>
+      ]],
+			{
+				i(1),
+				i(2),
+				i(0),
+			}
+		),
+		{}
+	),
+	autosnippet(
 		{ trig = "tt", name = "@test", dscr = "define @test" },
 		fmta(
 			[[
@@ -156,14 +173,15 @@ return {
 		},
 		fmta(
 			[[
-      struct <>
+      <> <>
         <>
       end
       <>
       ]],
 			{
-				i(1),
+				c(1, { t("struct"), t("mutable struct") }),
 				i(2),
+				i(3),
 				i(0),
 			}
 		),
@@ -192,7 +210,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "for",
+			trig = "for ",
 			name = "for",
 			dscr = "for with end",
 		},
