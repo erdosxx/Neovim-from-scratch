@@ -140,3 +140,7 @@ keymap("n", "<localleader>p", "<cmd>ChatGPT<cr>", opts)
 keymap("n", "<localleader>n", "<cmd>NeoAI<cr>", opts)
 keymap("n", "<localleader>t", "<cmd>NeoAIToggle<cr>", opts)
 keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
+
+-- Packer & Mason
+keymap("n", "<localleader>4", "<cmd>PackerSync<cr>", opts)
+keymap("n", "<localleader>5", "<cmd>Mason<cr>", opts)
