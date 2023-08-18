@@ -64,7 +64,7 @@ return {
 		{ condition = line_begin }
 	),
 	autosnippet(
-		{ trig = "df", name = "def function", dscr = "define function" },
+		{ trig = "def", name = "def function", dscr = "define function" },
 		fmta(
 			[[
       function <>(<>)
@@ -112,7 +112,7 @@ return {
 		{ condition = line_begin }
 	),
 	autosnippet(
-		{ trig = "dat", name = "abstract type", dscr = "define abstract type" },
+		{ trig = "dab", name = "abstract type", dscr = "define abstract type" },
 		fmta(
 			[[
       abstract type <> end

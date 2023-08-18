@@ -144,3 +144,9 @@ keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
 -- Packer & Mason
 keymap("n", "<localleader>4", "<cmd>PackerSync<cr>", opts)
 keymap("n", "<localleader>5", "<cmd>Mason<cr>", opts)
+
+-- when cmp give choices,
+-- abort it and move forward to next input for snippet.
+keymap("i", "<F2>", "<ESC>i<C-j>", opts_remap_echo)
+-- remove comment string and add normal input for coding.
+keymap("i", "<F3>", "<ESC>xa", opts_remap_echo)

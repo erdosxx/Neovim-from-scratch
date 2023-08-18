@@ -48,6 +48,8 @@ local function minted()
 	return env("minted")
 end
 
+local line_begin = require("luasnip.extras.expand_conditions").line_begin
+
 local pyfile = make_condition(python)
 local texfile = make_condition(tex)
 local pymint = make_condition(mintedPython)
@@ -83,5 +85,23 @@ return {
 				d(3, get_visual_new, {}, { user_args = { "pass" } }),
 			}
 		)
+	),
+	autosnippet(
+		{ trig = "def", name = "def function", dscr = "define function" },
+		fmta(
+			[[
+      def <>(<>)<>
+          <>
+      <>
+      ]],
+			{
+				i(1),
+				i(2),
+				c(3, { t(":"), sn(nil, { t(" -> "), i(1), t(":") }) }),
+				i(4),
+				i(0),
+			}
+		),
+		{ condition = line_begin }
 	),
 }
