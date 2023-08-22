@@ -4,9 +4,11 @@ if not status_ok then
 end
 
 configs.setup({
+	auto_install = true,
+	modules = {},
 	ensure_installed = "all", -- "all" (parsers with maintainers), or a list of languages
 	sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
-	ignore_install = { "lua" }, -- List of parsers to ignore installing
+	ignore_install = {}, -- List of parsers to ignore installing
 	autopairs = {
 		enable = true,
 	},
