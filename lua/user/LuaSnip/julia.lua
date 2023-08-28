@@ -16,6 +16,21 @@ end
 
 return {
 	autosnippet(
+		{ trig = "module ", name = "module", dscr = "module end" },
+		fmta(
+			[[
+      module <>
+      <>
+      end
+      ]],
+			{
+				i(1),
+				i(2),
+			}
+		),
+		{ condition = line_begin }
+	),
+	autosnippet(
 		{ trig = " do ", name = "do", dscr = "do end" },
 		fmta(
 			[[
