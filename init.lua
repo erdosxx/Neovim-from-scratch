@@ -26,4 +26,3 @@ require("user.luaSnip")
 require("user.vimtex")
 require("user.chatgpt")
 require("user.neoai")
---[[ require("user.julia_formatter") ]]

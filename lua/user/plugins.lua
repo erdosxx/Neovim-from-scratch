@@ -157,6 +157,9 @@ return packer.startup(function(use)
 	-- Julia
 	use("andreypopp/julia-repl-vim")
 
+	-- for bats (Bash Automated Testing System) syntax.
+	use("aliou/bats.vim")
+
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
 	if PACKER_BOOTSTRAP then
