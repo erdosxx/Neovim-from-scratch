@@ -5,22 +5,26 @@ end
 
 ibl.setup({
 	enabled = true,
-	filetypes = {
-		"lspinfo",
-		"packer",
-		"checkhealth",
-		"help",
-		"man",
-		"gitcommit",
-		"TelescopePrompt",
-		"TelescopeResults",
-		"startify",
-		"dashboard",
-		"neogitstatus",
-		"NvimTree",
-		"Trouble",
+	exclude = {
+		filetypes = {
+			"lspinfo",
+			"packer",
+			"checkhealth",
+			"help",
+			"man",
+			"gitcommit",
+			"TelescopePrompt",
+			"TelescopeResults",
+			"startify",
+			"dashboard",
+			"neogitstatus",
+			"NvimTree",
+			"Trouble",
+		},
 	},
 	indent = { char = "▏" },
-	show_start = false,
-	show_end = false,
+	scope = {
+		show_start = false,
+		show_end = false,
+	},
 })

@@ -105,6 +105,8 @@ require("chatgpt").setup({
 		win_options = {
 			winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
 		},
+		-- Use enter in normal mode,
+		-- Ref: https://github.com/jackMort/ChatGPT.nvim/issues/179
 		submit = "<C-Enter>",
 		submit_n = "<Enter>",
 		max_visible_lines = 20,
