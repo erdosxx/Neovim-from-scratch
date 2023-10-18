@@ -280,7 +280,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "try",
+			trig = "try ",
 			name = "try",
 			dscr = "try block",
 		},
@@ -304,7 +304,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "([%a%d()]+)@",
+			trig = "([%a%d()]+)¬",
 			name = "::",
 			dscr = "input :: for type",
 			regTrig = true,
