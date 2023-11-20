@@ -122,7 +122,7 @@ keymap(
 )
 
 -- Nvimtree
-keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts)
+--[[ keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts) ]]
 keymap("n", "<localleader>f", ":Format<cr>", opts)
 
 -- Telescope

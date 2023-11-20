@@ -9,6 +9,7 @@ local servers = {
 	"tsserver",
 	"yamlls",
 	"julials",
+	"clojure_lsp",
 }
 
 local settings = {
