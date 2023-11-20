@@ -157,6 +157,10 @@ return packer.startup(function(use)
 	-- Julia
 	use("andreypopp/julia-repl-vim")
 
+	-- clojure
+	use("Olical/conjure")
+	use("Olical/nfnl")
+
 	-- for bats (Bash Automated Testing System) syntax.
 	use("aliou/bats.vim")
 
