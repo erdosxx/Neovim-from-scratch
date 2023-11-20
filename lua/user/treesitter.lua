@@ -3,6 +3,8 @@ if not status_ok then
 	return
 end
 
+vim.g.skip_ts_context_commentstring_module = true
+
 configs.setup({
 	auto_install = true,
 	modules = {},
@@ -18,10 +20,6 @@ configs.setup({
 		additional_vim_regex_highlighting = true,
 	},
 	indent = { enable = true, disable = { "yaml" } },
-	context_commentstring = {
-		enable = true,
-		enable_autocmd = false,
-	},
 	rainbow = {
 		enable = true,
 		-- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
