@@ -18,7 +18,10 @@ null_ls.setup({
 				group = augroup,
 				buffer = bufnr,
 				callback = function()
-					vim.lsp.buf.format({ bufnr = bufnr })
+					local ft = vim.api.nvim_get_option_value("filetype", {})
+					if ft ~= "markdown" then
+						vim.lsp.buf.format({ bufnr = bufnr })
+					end
 				end,
 			})
 		end
