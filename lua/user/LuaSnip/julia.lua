@@ -175,7 +175,7 @@ return {
 	),
 	autosnippet(
 		{
-			trig = "dg",
+			trig = "dg ",
 			name = "def gen function",
 			dscr = "define generated function",
 		},
