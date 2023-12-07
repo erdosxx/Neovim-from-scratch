@@ -14,7 +14,7 @@ local capture = function(_, parent, user_args)
 	return parent.captures[user_args]
 end
 
-return {
+local snips = {
 	autosnippet(
 		{ trig = "let ", name = "let", dscr = "let end" },
 		fmta(
@@ -316,4 +316,57 @@ return {
 		}),
 		{}
 	),
+	autosnippet(
+		{
+			trig = "([%a%d()]+)¬",
+			name = "::",
+			dscr = "input :: for type",
+			regTrig = true,
+			wordTrig = false,
+		},
+		fmta([[<>::<>]], {
+			f(capture, {}, { user_args = { 1 } }),
+			i(0),
+		}),
+		{}
+	),
+	autosnippet({
+		trig = "<F4>",
+		name = "|>",
+		dscr = "right triangle",
+	}, { t("|> ") }, {}),
 }
+
+local math_symbs = {
+	{ name = "alpha", symbol = "α" },
+	{ name = "beta", symbol = "β" },
+	{ name = "gamma", symbol = "γ" },
+	{ name = "delta", symbol = "δ" },
+	{ name = "Delta", symbol = "Δ" },
+	{ name = "lambda", symbol = "λ" },
+	{ name = "Lambda", symbol = "Λ" },
+	{ name = "theta", symbol = "θ" },
+	{ name = "mu", symbol = "μ" },
+	{ name = "pi", symbol = "π" },
+	{ name = "eta", symbol = "η" },
+	{ name = "varphi", symbol = "φ" },
+	{ name = "psi", symbol = "ψ" },
+	{ name = "phi", symbol = "ϕ" },
+	{ name = "epsilon", symbol = "ϵ" },
+	{ name = "sigma", symbol = "σ" },
+	{ name = "circ", symbol = "∘" },
+	{ name = "yhat", symbol = "ŷ" },
+	{ name = "Wbar", symbol = "W̄" },
+}
+
+for _, symb in ipairs(math_symbs) do
+	local snip = autosnippet({
+		trig = "\\" .. symb.name .. " ",
+		name = symb.symbol,
+		dscr = "greek " .. symb.name,
+	}, { t(symb.symbol) }, {})
+
+	table.insert(snips, snip)
+end
+
+return snips
