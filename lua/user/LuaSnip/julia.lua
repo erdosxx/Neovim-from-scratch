@@ -357,6 +357,9 @@ local math_symbs = {
 	{ name = "circ", symbol = "∘" },
 	{ name = "yhat", symbol = "ŷ" },
 	{ name = "Wbar", symbol = "W̄" },
+	{ name = "prime", symbol = "′" },
+	{ name = "pprime", symbol = "″" },
+	{ name = "ppprime", symbol = "‴" },
 }
 
 for _, symb in ipairs(math_symbs) do
@@ -364,6 +367,7 @@ for _, symb in ipairs(math_symbs) do
 		trig = "\\" .. symb.name .. " ",
 		name = symb.symbol,
 		dscr = "greek " .. symb.name,
+		wordTrig = false,
 	}, { t(symb.symbol) }, {})
 
 	table.insert(snips, snip)
