@@ -160,6 +160,11 @@ return packer.startup(function(use)
 	-- clojure
 	use("Olical/conjure")
 	use("Olical/nfnl")
+	-- Structural editing, optional
+	--[[ use("guns/vim-sexp") ]]
+	use("tpope/vim-sexp-mappings-for-regular-people")
+	use("tpope/vim-repeat")
+	use("tpope/vim-surround")
 
 	-- for bats (Bash Automated Testing System) syntax.
 	use("aliou/bats.vim")

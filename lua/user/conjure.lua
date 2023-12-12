@@ -1,4 +1,4 @@
-vim.g["conjure#mapping#prefix"] = "#"
+vim.api.nvim_set_var("let g:conjure#mapping#prefix", "#")
 vim.g["conjure#filetypes"] = {
 	"clojure",
 	"fennel",
@@ -8,8 +8,12 @@ vim.g["conjure#filetypes"] = {
 	"scheme",
 	"lua",
 	"lisp",
-	"python",
+	--[[ "python", ]]
 	"rust",
 	"sql",
 	--[[ "julia", ]]
 }
+--[[ vim.g["conjure#client#julia#stdio#command"] = "julia --project=. -i" ]]
+vim.g["conjure#mapping#eval_current_form"] = "u"
+vim.g["conjure#mapping#eval_root_form"] = "/"
+vim.g["conjure#mapping#eval_visual"] = "k"
