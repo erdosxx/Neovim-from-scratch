@@ -3,7 +3,6 @@ local servers = {
 	"cssls",
 	"html",
 	"jsonls",
-	--[[ "texlab", ]]
 	"ltex",
 	"pyright",
 	"lua_ls",
@@ -11,6 +10,10 @@ local servers = {
 	"yamlls",
 	"julials",
 	"clojure_lsp",
+	"clangd",
+	"java_language_server",
+	"marksman",
+	"rust_analyzer",
 	"rnix",
 }
 
@@ -48,8 +51,12 @@ for _, server in pairs(servers) do
 
 	server = vim.split(server, "@")[1]
 
-	local require_ok, conf_opts =
-		pcall(require, "user.lsp.settings." .. server)
+	-- Ref: https://github.com/jose-elias-alvarez/null-ls.nvim/issues/428
+	if server == "clangd" then
+		opts.cmd = { "clangd", "--offset-encoding=utf-16" }
+	end
+
+	local require_ok, conf_opts = pcall(require, "user.lsp.settings." .. server)
 	if require_ok then
 		--[[ vim.notify(server .. " loaded.") ]]
 		opts = vim.tbl_deep_extend("force", conf_opts, opts)

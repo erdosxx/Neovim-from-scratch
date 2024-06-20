@@ -304,21 +304,8 @@ local snips = {
 	),
 	autosnippet(
 		{
-			trig = "([%a%d()]+)¬",
-			name = "::",
-			dscr = "input :: for type",
-			regTrig = true,
-			wordTrig = false,
-		},
-		fmta([[<>::<>]], {
-			f(capture, {}, { user_args = { 1 } }),
-			i(0),
-		}),
-		{}
-	),
-	autosnippet(
-		{
-			trig = "([%a%d()]+)¬",
+			-- with not space chars
+			trig = "(%(.*[^%d]):",
 			name = "::",
 			dscr = "input :: for type",
 			regTrig = true,
@@ -360,6 +347,26 @@ local math_symbs = {
 	{ name = "prime", symbol = "′" },
 	{ name = "pprime", symbol = "″" },
 	{ name = "ppprime", symbol = "‴" },
+	{ name = "xor", symbol = "⊻" },
+	{ name = "veebar", symbol = "⊻" },
+	{ name = "nand", symbol = "⊼" },
+	{ name = "barwedge", symbol = "⊼" },
+	{ name = "nor", symbol = "⊽" },
+	{ name = "barvee", symbol = "⊽" },
+	{ name = "div", symbol = "÷" },
+	{ name = "times", symbol = "×" },
+	{ name = "degree", symbol = "°" },
+	{ name = "pm", symbol = "±" },
+	{ name = "_0", symbol = "₀" },
+	{ name = "_1", symbol = "₁" },
+	{ name = "_2", symbol = "₂" },
+	{ name = "_3", symbol = "₃" },
+	{ name = "_4", symbol = "₄" },
+	{ name = "_5", symbol = "₅" },
+	{ name = "_6", symbol = "₆" },
+	{ name = "_7", symbol = "₇" },
+	{ name = "_8", symbol = "₈" },
+	{ name = "_9", symbol = "₉" },
 }
 
 for _, symb in ipairs(math_symbs) do

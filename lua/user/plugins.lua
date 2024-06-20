@@ -160,7 +160,7 @@ return packer.startup(function(use)
 	use("Olical/conjure")
 	use("Olical/nfnl")
 	-- Structural editing, optional
-	--[[ use("guns/vim-sexp") ]]
+	use("guns/vim-sexp")
 	use("tpope/vim-sexp-mappings-for-regular-people")
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")

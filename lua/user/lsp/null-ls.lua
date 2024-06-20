@@ -52,5 +52,8 @@ null_ls.setup({
 		formatting.cljstyle,
 		-- error occurred when apply formating with VimTeX.
 		--[[ formatting.latexindent, ]]
+		--[[ diagnostics.cppcheck, ]]
+		formatting.shfmt,
+		--[[ formatting.clang_format, ]]
 	},
 })

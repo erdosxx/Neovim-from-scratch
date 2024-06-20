@@ -71,8 +71,8 @@ keymap("n", "<localleader><Left>", ":vertical resize -2<CR>", opts)
 keymap("n", "<localleader><Right>", ":vertical resize +2<CR>", opts)
 
 -- Navigate buffers
-keymap("n", "<localleader>l", ":bnext<CR>", opts)
-keymap("n", "<localleader>h", ":bprevious<CR>", opts)
+keymap("n", "<localleader>0", ":bnext<CR>", opts)
+keymap("n", "<localleader>7", ":bprevious<CR>", opts)
 
 -- Insert --
 -- Press jk fast to enter
@@ -132,7 +132,7 @@ keymap("n", "<C-t>", "<cmd>Telescope live_grep<cr>", opts)
 
 --Buffer line
 -- wipeout current buffer
-keymap("n", "<localleader>b", "<cmd>Bdelete!<cr>", opts)
+keymap("n", "<localleader>v", "<cmd>Bdelete!<cr>", opts)
 
 -- ChatGPT
 
