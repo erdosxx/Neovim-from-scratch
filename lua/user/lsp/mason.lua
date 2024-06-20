@@ -3,13 +3,15 @@ local servers = {
 	"cssls",
 	"html",
 	"jsonls",
-	"texlab",
+	--[[ "texlab", ]]
+	"ltex",
 	"pyright",
 	"lua_ls",
 	"tsserver",
 	"yamlls",
 	"julials",
 	"clojure_lsp",
+	"rnix",
 }
 
 local settings = {
