@@ -6,7 +6,7 @@ local opts_remap_echo = { noremap = false, silent = false }
 local keymap = vim.api.nvim_set_keymap
 
 -- Julia
-keymap("n", "<localleader>o", "<cmd>JuliaREPLConnect<cr>", opts)
+keymap("n", "<localleader>o", "<cmd>JuliaREPLConnect 2345<cr>", opts)
 keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
 keymap(
 	"v",
