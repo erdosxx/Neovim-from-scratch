@@ -52,6 +52,11 @@ return packer.startup(function(use)
 	use("kyazdani42/nvim-web-devicons")
 	use("kyazdani42/nvim-tree.lua")
 	use("akinsho/bufferline.nvim")
+	use({
+		"ThePrimeagen/harpoon",
+		--[[ branch = "harpoon2", ]]
+		requires = { { "nvim-lua/plenary.nvim" } },
+	})
 	use("moll/vim-bbye")
 	use("nvim-lualine/lualine.nvim")
 	use("akinsho/toggleterm.nvim")

@@ -150,3 +150,5 @@ keymap("n", "<localleader>5", "<cmd>Mason<cr>", opts)
 keymap("i", "<F2>", "<ESC>i<C-j>", opts_remap_echo)
 -- remove comment string and add normal input for coding.
 keymap("i", "<F3>", "<ESC>xa", opts_remap_echo)
+
+require("user.harpoon").config()
