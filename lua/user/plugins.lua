@@ -54,7 +54,7 @@ return packer.startup(function(use)
 	use("akinsho/bufferline.nvim")
 	use({
 		"ThePrimeagen/harpoon",
-		--[[ branch = "harpoon2", ]]
+		-- branch = "harpoon2",
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
 	use("moll/vim-bbye")
