@@ -71,8 +71,9 @@ keymap("n", "<localleader><Left>", ":vertical resize -2<CR>", opts)
 keymap("n", "<localleader><Right>", ":vertical resize +2<CR>", opts)
 
 -- Navigate buffers
-keymap("n", "<localleader>0", ":bnext<CR>", opts)
-keymap("n", "<localleader>7", ":bprevious<CR>", opts)
+-- use <leader>b and select instead. see whichkey.lua
+--[[ keymap("n", "<localleader>0", ":bnext<CR>", opts) ]]
+--[[ keymap("n", "<localleader>7", ":bprevious<CR>", opts) ]]
 
 -- Insert --
 -- Press jk fast to enter
@@ -123,6 +124,8 @@ keymap(
 
 -- Nvimtree
 --[[ keymap("n", "<localleader>e", ":NvimTreeToggle<cr>", opts) ]]
+
+-- See handlers.lua for the definition of Format
 keymap("n", "<localleader>f", ":Format<cr>", opts)
 
 -- Telescope
@@ -142,8 +145,10 @@ keymap("n", "<localleader>t", "<cmd>NeoAIToggle<cr>", opts)
 keymap("v", "<localleader>c", "<cmd>NeoAIContext<cr>", opts)
 
 -- Packer & Mason
-keymap("n", "<localleader>4", "<cmd>PackerSync<cr>", opts)
-keymap("n", "<localleader>5", "<cmd>Mason<cr>", opts)
+-- Use <leader>ps instead. Ref whichkey.lua
+--[[ keymap("n", "<localleader>4", "<cmd>PackerSync<cr>", opts) ]]
+-- Use <leader>pm instead. Ref whichkey.lua
+--[[ keymap("n", "<localleader>5", "<cmd>Mason<cr>", opts) ]]
 
 -- when cmp give choices,
 -- abort it and move forward to next input for snippet.
