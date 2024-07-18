@@ -27,7 +27,8 @@ vim.g.maplocalleader = " "
 keymap("n", "Q", "gq", opts)
 
 -- change word to upper case in normal mode.
-keymap("n", "<leader><C-u>", "viwUw", opts)
+-- conflict with whichkey scroll up, so disabled it.
+--[[ keymap("n", "<leader><C-u>", "viwUw", opts) ]]
 
 -- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)
