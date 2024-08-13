@@ -21,7 +21,7 @@ local diff = {
 	"diff",
 	colored = false,
 	symbols = { added = " ", modified = " ", removed = " " }, -- changes diff symbols
-  cond = hide_in_width
+	cond = hide_in_width,
 }
 
 local mode = {
@@ -52,16 +52,26 @@ local location = {
 local progress = function()
 	local current_line = vim.fn.line(".")
 	local total_lines = vim.fn.line("$")
-	local chars = { "__", "▁▁", "▂▂", "▃▃", "▄▄", "▅▅", "▆▆", "▇▇", "██" }
+	local chars = {
+		"__",
+		"▁▁",
+		"▂▂",
+		"▃▃",
+		"▄▄",
+		"▅▅",
+		"▆▆",
+		"▇▇",
+		"██",
+	}
 	local line_ratio = current_line / total_lines
 	local index = math.ceil(line_ratio * #chars)
 	return chars[index]
 end
 
 local spaces = function()
-	return "spaces: " .. vim.api.nvim_buf_get_option(0, "shiftwidth")
+	return "spaces: "
+		.. vim.api.nvim_get_option_value("shiftwidth", { buf = 0 })
 end
-
 lualine.setup({
 	options = {
 		icons_enabled = true,
