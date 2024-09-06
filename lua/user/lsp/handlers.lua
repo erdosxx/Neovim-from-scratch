@@ -109,7 +109,7 @@ local function lsp_keymaps(bufnr)
 end
 
 M.on_attach = function(client, bufnr)
-	if client.name == "tsserver" or client.name == "lua_ls" then
+	if client.name == "lua_ls" then
 		-- Stop Neovim from asking me which server I want to use for formatting
 		-- Avoiding LSP formatting conflicts
 		-- Ref: https://github.com/jose-elias-alvarez/null-ls.nvim/wiki/Avoiding-LSP-formatting-conflicts

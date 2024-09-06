@@ -6,7 +6,6 @@ local servers = {
 	"ltex",
 	"pyright",
 	"lua_ls",
-	"tsserver",
 	"yamlls",
 	"julials",
 	"clojure_lsp",
@@ -56,7 +55,8 @@ for _, server in pairs(servers) do
 		opts.cmd = { "clangd", "--offset-encoding=utf-16" }
 	end
 
-	local require_ok, conf_opts = pcall(require, "user.lsp.settings." .. server)
+	local require_ok, conf_opts =
+		pcall(require, "user.lsp.settings." .. server)
 	if require_ok then
 		--[[ vim.notify(server .. " loaded.") ]]
 		opts = vim.tbl_deep_extend("force", conf_opts, opts)
