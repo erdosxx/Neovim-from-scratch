@@ -4,10 +4,22 @@ local opts_remap_echo = { noremap = false, silent = false }
 
 -- Shorten function name
 local keymap = vim.api.nvim_set_keymap
+local keyset = vim.keymap.set
 
 -- Julia
 keymap("n", "<localleader>o", "<cmd>JuliaREPLConnect 2345<cr>", opts)
 keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
+-- Todo: Following code does not work.
+--[[ keyset("n", "<localleader>u", function() ]]
+--[[ 	local success, result = pcall(function() ]]
+--[[ 		vim.cmd([[JuliaREPLSend]]) ]]
+--[[ 	end) ]]
+--[[ 	print("Suc: " .. tostring(success) .. " Res: " .. (result or "nil")) ]]
+--[[ 	if not success then ]]
+--[[ 		vim.cmd("JuliaREPLConnect 2345") ]]
+--[[ 		vim.cmd("JuliaREPLSend") ]]
+--[[ 	end ]]
+--[[ end, opts) ]]
 keymap(
 	"v",
 	"<localleader>u",

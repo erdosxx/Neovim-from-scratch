@@ -4,11 +4,13 @@ local opts_remap_echo = { noremap = false, silent = false }
 
 -- Shorten function name
 local keymap = vim.api.nvim_set_keymap
+local keyset = vim.keymap.set
 
 --- Jupyter vim ---
 keymap("n", "<localleader>o", "<cmd>JupyterConnect<CR>", opts)
 
 keymap("n", "<localleader>u", "<cmd>JupyterSendRange<CR>", opts)
+
 keymap(
 	"v",
 	"<localleader>u",
@@ -27,5 +29,12 @@ keymap(
 	"n",
 	"<localleader>/",
 	"[m:Format<CR>]MV[m:JupyterSendRange<CR> <cmd>normal! `><CR>",
+	opts_remap -- for using %, need to use remap
+)
+
+keymap(
+	"n",
+	"<localleader>.",
+	"%:Format<CR>v%:JupyterSendRange<CR>%$",
 	opts_remap -- for using %, need to use remap
 )
