@@ -12,7 +12,7 @@ keymap("n", "<localleader>u", "<cmd>JuliaREPLSend<cr>", opts)
 -- Todo: Following code does not work.
 --[[ keyset("n", "<localleader>u", function() ]]
 --[[ 	local success, result = pcall(function() ]]
---[[ 		vim.cmd([[JuliaREPLSend]]) ]]
+-- 		vim.cmd([[JuliaREPLSend]])
 --[[ 	end) ]]
 --[[ 	print("Suc: " .. tostring(success) .. " Res: " .. (result or "nil")) ]]
 --[[ 	if not success then ]]

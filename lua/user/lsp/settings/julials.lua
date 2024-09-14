@@ -6,9 +6,11 @@ return {
 	on_new_config = function(new_config, _)
 		local julia =
 			vim.fn.expand("~/.julia/environments/nvim-lspconfig/bin/julia")
-		--[[ vim.notify("Before Hello") ]]
 		if require("lspconfig").util.path.is_file(julia) then
-			--[[ vim.notify("Hello!") ]]
+			-- This replace just the command (first element of the array)
+			-- with the custom Julia path(nvim-lspconfig),
+			-- while preserving any arguments that
+			-- might be defined in the default configuration.
 			new_config.cmd[1] = julia
 		end
 	end,
