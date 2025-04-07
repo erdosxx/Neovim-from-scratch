@@ -1,8 +1,7 @@
 local fn = vim.fn
 
 -- Automatically install packer
-local install_path = fn.stdpath("data")
-	.. "/site/pack/packer/start/packer.nvim"
+local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
 	PACKER_BOOTSTRAP = fn.system({
 		"git",
@@ -98,7 +97,8 @@ return packer.startup(function(use)
 	use("nvim-telescope/telescope.nvim")
 	use("nvim-telescope/telescope-media-files.nvim")
 
-	use("jose-elias-alvarez/null-ls.nvim") -- LSP diagnostics and code actions
+	-- use("jose-elias-alvarez/null-ls.nvim") -- LSP diagnostics and code actions
+	use("nvimtools/none-ls.nvim") -- LSP diagnostics and code actions
 	-- automatically highlighting other uses of the word under the cursor using either LSP
 	use("RRethy/vim-illuminate")
 
